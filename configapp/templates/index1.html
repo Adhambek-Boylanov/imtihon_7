@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Adhambek — Portfolio</title>
+
+  <!-- Internal CSS (all styles in one file) -->
+  <style>
+
+    /* ---------------------------
+       Reset & Base
+    ----------------------------*/
+    :root{
+      --bg-1: #0f1724;
+      --bg-2: #102a43;
+      --accent-1: #6EE7B7;
+      --accent-2: #60A5FA;
+      --glass: rgba(255,255,255,0.06);
+      --card: rgba(255,255,255,0.03);
+      --muted: rgba(255,255,255,0.65);
+      --max-width: 1100px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(96,165,250,0.12), transparent),
+                  radial-gradient(800px 400px at 85% 85%, rgba(110,231,183,0.08), transparent),
+                  linear-gradient(180deg,var(--bg-1), var(--bg-2));
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      overflow-x:hidden;
+      padding-bottom:80px;
+    }
+
+    img{max-width:100%;display:block}
+    a{color:var(--accent-2);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* ---------------------------
+       Container / Layout
+    ----------------------------*/
+    .container{
+      width:calc(100% - 40px);
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:30px 20px;
+    }
+
+    header.site-header{
+      position:fixed;
+      top:18px;
+      left:18px;
+      right:18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      z-index:60;
+      padding:10px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      box-shadow: 0 6px 24px rgba(2,6,23,0.6);
+      backdrop-filter: blur(6px);
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    .brand .logo {
+      width:46px;height:46px;border-radius:10px;
+      background: linear-gradient(135deg,var(--accent-1),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;color:#032541;
+      box-shadow: 0 6px 20px rgba(96,165,250,0.08), inset 0 -6px 18px rgba(0,0,0,0.08);
+    }
+
+    .brand .title {font-weight:700; font-size:1.05rem; color:#eaf6f0}
+    nav.top-nav{display:flex;gap:10px;align-items:center}
+    nav.top-nav a{
+      padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:600;font-size:0.9rem;
+      transition:all .18s ease;
+    }
+    nav.top-nav a:hover{background:rgba(255,255,255,0.03); color:white; transform:translateY(-2px)}
+
+    .cta {
+      padding:8px 14px;border-radius:9px;background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:#022127;font-weight:700;font-size:0.9rem;
+      box-shadow: 0 8px 26px rgba(96,165,250,0.12);
+    }
+
+    /* ---------------------------
+       Hero
+    ----------------------------*/
+    .hero{
+      min-height:84vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding-top:120px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* decorative shapes */
+    .bg-shape {
+      position:absolute; border-radius:50%; filter:blur(60px); opacity:0.55;
+    }
+    .bg-shape.one{ width:680px;height:680px; background:linear-gradient(135deg,#6EE7B7,#60A5FA); left:-180px; top:-120px; transform:rotate(12deg);}
+    .bg-shape.two{ width:420px;height:420px; background:linear-gradient(135deg,#8B5CF6,#06B6D4); right:-120px; bottom:-180px; transform:rotate(-8deg); opacity:0.5;}
+
+    .hero-card{
+      position:relative;
+      z-index:10;
+      width:100%;
+      max-width:1100px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:center;
+      padding:36px;
+      border-radius:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 20px 60px rgba(2,6,23,0.7);
+      border:1px solid rgba(255,255,255,0.03);
+      overflow:hidden;
+    }
+
+    .hero-left h1{
+      font-size:2.6rem;
+      letter-spacing:-1px;
+      margin-bottom:10px;
+      color:#e9fff7;
+      line-height:1.02;
+    }
+
+    .hero-left p.lead{
+      color: #cfeef4; font-size:1.05rem; margin-bottom:18px;
+    }
+
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:12px;border:0;cursor:pointer;font-weight:700;
+      text-decoration:none;color:inherit;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#022127;
+      box-shadow: 0 10px 40px rgba(96,165,250,0.12);
+    }
+    .btn.ghost{
+      background: transparent;border:1px solid rgba(255,255,255,0.06); color:var(--muted)
+    }
+
+    .hero-stats{display:flex;gap:12px; margin-top:18px; flex-wrap:wrap}
+    .stat{
+      background:var(--card); padding:12px 14px;border-radius:12px;min-width:110px;text-align:center;
+      box-shadow: 0 8px 18px rgba(2,6,23,0.45);
+    }
+    .stat strong{display:block;font-size:1.2rem;color:#eaf6f0}
+
+    /* right column card */
+    .hero-right{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:18px;height:100%;display:flex;flex-direction:column;justify-content:center;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .profile-avatar{
+      width:92px;height:92px;border-radius:14px; background: linear-gradient(135deg,#9f7aea,#60a5fa);
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:#021836;font-size:1.4rem;margin-bottom:12px;
+    }
+    .skill-tags{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:0.85rem;color:var(--muted)}
+
+    /* ---------------------------
+       Sections common
+    ----------------------------*/
+    section.content-section{
+      padding:70px 0;
+      position:relative;
+      z-index:2;
+    }
+
+    .section-title{
+      text-align:center;margin-bottom:28px;
+    }
+    .section-title h2{font-size:1.8rem;color:#e9fff7}
+    .section-sub{color:var(--muted);margin-top:8px}
+
+    /* ---------------------------
+       About
+    ----------------------------*/
+    .about-grid{
+      display:grid;grid-template-columns: 420px 1fr;gap:28px;align-items:start;
+    }
+
+    .about-card{
+      padding:20px;border-radius:12px;background:var(--glass);border:1px solid rgba(255,255,255,0.03);
+    }
+    .about-card p{color:var(--muted)}
+
+    .profile-info dl{display:grid;grid-template-columns:120px 1fr;gap:8px 14px;margin-top:12px}
+    .profile-info dt{color:var(--muted);font-weight:700}
+    .profile-info dd{margin:0;color:#e8f7f2}
+
+    /* ---------------------------
+       Resume
+    ----------------------------*/
+    .timeline{display:flex;flex-direction:column;gap:18px}
+    .timeline-item{display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:start}
+    .timeline-item .time{color:var(--muted);font-weight:700}
+    .timeline-item .body{background:rgba(255,255,255,0.02);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+
+    /* ---------------------------
+       Portfolio (cards)
+    ----------------------------*/
+    .projects-grid{display:grid;grid-template-columns: repeat(3,1fr);gap:18px}
+    .project-card{border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+    .project-card .thumb{height:180px;background:linear-gradient(135deg,#60A5FA,#6EE7B7);display:flex;align-items:center;justify-content:center;font-weight:800;color:#032541;font-size:1.2rem}
+    .project-card .content{padding:14px}
+    .project-card .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:0.8rem;color:var(--muted)}
+
+    /* ---------------------------
+       Contact form
+    ----------------------------*/
+    .contact-wrap{max-width:760px;margin:0 auto}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .form-field{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    textarea.form-field{min-height:120px;resize:vertical}
+    .submit-btn{display:inline-block;padding:12px 20px;border-radius:12px;background: linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#022127;border:0;font-weight:800;cursor:pointer}
+
+    /* ---------------------------
+       Footer
+    ----------------------------*/
+    footer.site-footer{
+      position:fixed;left:18px;right:18px;bottom:18px;padding:12px 18px;border-radius:12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      display:flex;justify-content:space-between;align-items:center;z-index:60;
+    }
+    footer .copyright{color:var(--muted);font-size:0.95rem}
+
+    /* ---------------------------
+       Responsive
+    ----------------------------*/
+    @media (max-width:1000px){
+      .hero-card{grid-template-columns:1fr 320px}
+      .projects-grid{grid-template-columns: repeat(2,1fr)}
+      .about-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:720px){
+      header.site-header{flex-direction:column;gap:10px;left:12px;right:12px}
+      nav.top-nav{display:flex;flex-wrap:wrap;justify-content:center}
+      .hero-card{grid-template-columns:1fr; padding:20px}
+      .hero-left h1{font-size:2rem}
+      .projects-grid{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      footer.site-footer{flex-direction:column;gap:8px}
+    }
+
+    /* ---------------------------
+       Small helpers & animations
+    ----------------------------*/
+    .fade-in{animation:fadeInUp .7s ease both}
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+
+    .float{
+      animation:floatAnim 8s ease-in-out infinite;
+    }
+    @keyframes floatAnim{
+      0%{transform:translateY(0)}
+      50%{transform:translateY(-18px)}
+      100%{transform:translateY(0)}
+    }
+    .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 ta yonma-yon */
+    gap: 20px; /* kartalar orasidagi bo‘sh joy */
+    }
+
+    .project-card {
+        background: #fff;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 1024px) {
+        .projects-grid {
+            grid-template-columns: repeat(2, 1fr); /* planshetlarda 2 ta yonma-yon */
+        }
+    }
+
+    @media (max-width: 600px) {
+        .projects-grid {
+            grid-template-columns: 1fr; /* telefonlarda 1 ta qator */
+        }
+    }
+
+
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Header / Top nav -->
+  <header class="site-header container">
+    <div class="brand">
+      <div class="logo">AB</div>
+      <div>
+        <div class="title">Adhambek Boylanov</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Junior Backend Developer</div>
+      </div>
+    </div>
+
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#resume">Resume</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="{% url 'contact'%}">Contact</a>
+      <a class="cta" href="#contact">Hire me</a>
+      <a href="{% url 'logout'%}">Logout</a>
+
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <section id="home" class="hero">
+      <div class="bg-shape one float" aria-hidden="true"></div>
+      <div class="bg-shape two float" aria-hidden="true" style="animation-delay:2s"></div>
+
+      <div class="hero-card container fade-in">
+        <div class="hero-left">
+          <h1>Hi, I'm <span style="color:var(--accent-1)">Adhambek</span></h1>
+          <p class="lead">I build fast, accessible and delightful web applications using Django, Python and modern UI patterns.</p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#portfolio">View projects</a>
+            <a class="btn ghost" href="#about">About me</a>
+            <a class="btn ghost" href=" {% url 'download_cv' %}">Download CV</a>
+          </div>
+
+          <div class="hero-stats" aria-hidden="true">
+            <div class="stat">
+              <div class="label">Projects</div>
+              <strong>10</strong>
+            </div>
+            <div class="stat">
+              <div class="label">Clients</div>
+              <strong>12</strong>
+            </div>
+            <div class="stat">
+              <div class="label">Experience</div>
+              <strong>1 year</strong>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-right">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="profile-avatar">AB</div>
+            <div>
+              <div style="font-weight:800;color:#e8fff6">Adhambek Boylanov</div>
+              <div style="color:var(--muted);font-size:0.9rem">Backend web developer</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;color:var(--muted)">
+            <div style="font-weight:800;margin-bottom:8px">Skills</div>
+            <div class="skill-tags">
+              <span class="tag">Django</span>
+              <span class="tag">REST API</span>
+              <span class="tag">PostgreSQL</span>
+              <span class="tag">HTML</span>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <a class="btn ghost" href="#contact">Contact</a>
+            <a class="btn ghost" href="#portfolio">Work</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="content-section">
+      <div class="container">
+        <div class="section-title">
+          <h2>About Me</h2>
+          <p class="section-sub">Passionate about building products that make people's lives easier.</p>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-card">
+            <h3 style="margin-bottom:8px">Who I am</h3>
+            <p>I’m a web developer focused on building scalable backends and delightful experiences. I enjoy clean architecture, test-driven development, and shipping useful features quickly.</p>
+
+            <div style="margin-top:14px" class="profile-info">
+              <dl>
+                <dt>Full name</dt><dd>Adhambek Boylanov</dd>
+                <dt>Location</dt><dd>Tashkent, Uzbekistan</dd>
+                <dt>Email</dt><dd>adhambekboylanov@example.com</dd>
+                <dt>Phone</dt><dd>+998 93 303 19 06</dd>
+              </dl>
+            </div>
+
+            <div style="margin-top:16px">
+              <a href="#resume" class="btn primary">See detailed resume</a>
+            </div>
+          </div>
+
+          <div>
+            <div class="about-card" style="margin-bottom:16px">
+              <h4 style="margin-bottom:8px">What I do</h4>
+              <ul style="margin-left:18px;color:var(--muted);list-style:disc">
+                <li>Build REST APIs with Django & Django REST Framework</li>
+                <li>Deploy production apps using Docker, CI/CD and cloud providers</li>
+                <li>Optimize queries and runtime for performance</li>
+              </ul>
+            </div>
+            <div class="about-card">
+            <h4 style="margin-bottom:8px">Tools & Technologies</h4>
+            <div class="skills-list" style="margin-top:12px;">
+                {% for item in skills %}
+                    <span class="badge" style="
+                        display: block;          /* har biri yangi qatorda chiqadi */
+                        margin-bottom: 8px;      /* pastki oraliq */
+                        padding: 6px 10px;       /* ichki bo‘shliq */
+                        border-radius: 8px;      /* yumaloq burchaklar */
+                        background: rgba(255,255,255,0.05); /* ochiq fon */
+                        color: #e6eef8;          /* matn rangi */
+                        font-weight: 600;
+                        width: max-content;
+                    ">
+                        {{ item.name }} - {{ item.level }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RESUME -->
+    <section id="resume" class="content-section" style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)">
+      <div class="container">
+        <div class="section-title">
+          <h2>Resume</h2>
+          <p class="section-sub">Experience & Education</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+          <div>
+            <h3 style="color:#e9fff7;margin-bottom:12px">Experience</h3>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="time">2025 — Present</div>
+                <div class="body">
+                  <h4 style="margin-bottom:6px">Backend Developer — Acme Tech</h4>
+                  <div style="color:var(--muted);font-size:0.95rem">Working on APIs, payment integrations, and microservice orchestration.</div>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="time">2024 — 2025</div>
+                <div class="body">
+                  <h4 style="margin-bottom:6px">Backend Developer — Freelance</h4>
+                  <div style="color:var(--muted);font-size:0.95rem">Delivered several Django applications for small businesses.</div>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="time">2024 — 2025</div>
+                <div class="body">
+                  <h4 style="margin-bottom:6px">Junior Developer — Startup</h4>
+                  <div style="color:var(--muted);font-size:0.95rem">Helped build core features and CI/CD pipelines.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="color:#e9fff7;margin-bottom:12px">Education</h3>
+            <div class="timeline">
+              <div class="timeline-item">
+              {% for education in educations %}
+                  <div class="time">{{ education.start_date }} - {{ education.end_date }}</div>
+              {% endfor %}
+              <div class="body">
+                  <h4 style="margin-bottom:6px">Python-Django Backend</h4>
+                  <div style="color:var(--muted);font-size:0.95rem">Najot Talim — coursework in algorithms, databases and software engineering.</div>
+              </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="time">2023 — 2024</div>
+                <div class="body">
+                  <h4 style="margin-bottom:6px">High School Diploma</h4>
+                  <div style="color:var(--muted);font-size:0.95rem">Focus on mathematics and informatics.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="content-section">
+      <div class="container">
+        <div class="section-title">
+          <h2>Selected Projects</h2>
+          <p class="section-sub">A few projects I worked on recently — full list available on request</p>
+        </div>
+
+        <section id="projects" style="padding:60px 0; background:#0d1b2a; color:#fff;">
+          <h2 style="text-align:center; font-size:32px; margin-bottom:40px;">Loyihalar</h2>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:30px; max-width:1200px; margin:0 auto;">
+            {% for project in projects %}
+            <div style="background:#1b263b; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+              <div style="background:linear-gradient(90deg,#6a11cb,#2575fc); padding:20px; text-align:center; font-size:22px; font-weight:bold;">
+                {{ project.title }}
+              </div>
+              <div style="padding:20px;">
+                <h3 style="margin:0 0 10px 0;">{{ project.title }}</h3>
+                <p style="font-size:14px; line-height:1.6;">{{ project.description }}</p>
+                <p style="margin:10px 0; font-size:13px; color:#bbb;">
+                  {% for tech in project.get_technologies_list %}
+                    {{ tech }}{% if not forloop.last %} • {% endif %}
+                  {% endfor %}
+                </p>
+                {% if project.repo_link %}
+                <a href="{{ project.repo_link }}" target="_blank"
+                   style="display:inline-block; padding:8px 16px; background:#00b4d8; color:#fff; border-radius:6px; text-decoration:none; font-weight:bold;">Details</a>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+      </div>
+    </section>
+
+
+
+
+
+        <!-- more projects demo area -->
+        <div style="margin-top:28px;text-align:center">
+          <a class="btn primary" href="#portfolio">See all projects</a>
+        </div>
+
+      </div>
+    </section>
+
+<!--     CONTACT -->
+<!-- Contact Section -->
+<!--<section id="contact" style="background:#0d1b2a; color:#fff; padding:60px 20px;">-->
+<!--  <div class="container" style="max-width:600px; margin:0 auto;">-->
+<!--    <h2 style="text-align:center; margin-bottom:10px;">Contact Me</h2>-->
+<!--    <p class="section-sub" style="text-align:center; color:#bbb; margin-bottom:40px;">-->
+<!--      Send me a message, and I will get back to you.-->
+<!--    </p>-->
+
+<!--    {% if messages %}-->
+<!--      {% for message in messages %}-->
+<!--        <div style="padding:10px; background:green; color:#fff; margin-bottom:20px; border-radius:6px;">-->
+<!--          {{ message }}-->
+<!--        </div>-->
+<!--      {% endfor %}-->
+<!--    {% endif %}-->
+
+<!--    <form method="post" style="display:flex; flex-direction:column; gap:15px;">-->
+<!--      {% csrf_token %}-->
+<!--      <label for="id_name">Name</label>-->
+<!--      {{ form.name }}-->
+
+<!--      <label for="id_email">Email</label>-->
+<!--      {{ form.email }}-->
+
+<!--      <label for="id_message">Message</label>-->
+<!--      {{ form.message }}-->
+
+<!--      <button type="submit"-->
+<!--              style="padding:10px 20px; background:#00b4d8; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">-->
+<!--        Send Message-->
+<!--      </button>-->
+<!--    </form>-->
+<!--  </div>-->
+<!--</section>-->
+
+
+    <div style="margin-top:40px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;color:var(--muted)">
+      <div style="min-width:180px;text-align:center">
+        <div style="font-weight:800;color:#eaf6f0">Email</div>
+        <div style="margin-top:6px">adhambekboylanov@example.com</div>
+      </div>
+      <div style="min-width:180px;text-align:center">
+        <div style="font-weight:800;color:#eaf6f0">Phone</div>
+        <div style="margin-top:6px">+998 93 303 19 06</div>
+      </div>
+      <div style="min-width:180px;text-align:center">
+        <div style="font-weight:800;color:#eaf6f0">Location</div>
+        <div style="margin-top:6px">Tashkent, Uzbekistan</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Footer -->
+  <footer class="site-footer container" role="contentinfo">
+    <div class="copyright">© 2025 Adhambek Boylanov — All rights reserved.</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="#" aria-label="github" style="color:var(--muted)">Github</a>
+      <a href="#" aria-label="linkedin" style="color:var(--muted)">LinkedIn</a>
+      <a href="#" aria-label="twitter" style="color:var(--muted)">Twitter</a>
+    </div>
+  </footer>
+
+  <!-- Project modal (simple) -->
+  <div id="projectModal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:120">
+    <div id="modalBg" style="position:absolute;inset:0;background:rgba(2,6,23,0.85)"></div>
+    <div style="position:relative;max-width:900px;width:calc(100% - 40px);border-radius:12px;padding:20px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 30px 80px rgba(2,6,23,0.8);">
+      <button onclick="closeModal()" style="position:absolute;right:18px;top:12px;background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Smooth scroll for nav
+    document.querySelectorAll('nav.top-nav a[href^="#"]').forEach(link=>{
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if(target){
+          window.scrollTo({top: target.offsetTop - 70, behavior:'smooth'});
+        }
+      });
+    });
+
+    // Simple contact handler (demo only - replace with backend call)
+    function handleContact(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const resultEl = document.getElementById('formResult');
+
+      if(!name || !email || !message){
+        resultEl.style.color = '#ffadad';
+        resultEl.textContent = 'Iltimos, barcha kerakli maydonlarni to‘ldiring.';
+        return;
+      }
+
+      // Demo: show success (in real app, send fetch() to server)
+      resultEl.style.color = '#b7f2d6';
+      resultEl.textContent = 'Xabaringiz yuborildi — tez orada qaytamiz. (demo)';
+      document.getElementById('contactForm').reset();
+    }
+
+    // Project modal demo content
+    function openProject(e, key){
+      e.preventDefault();
+      const modal = document.getElementById('projectModal');
+      const content = document.getElementById('modalContent');
+      let html = '';
+      switch(key){
+        case 'taxi':
+          html = `<h2>Taxi Park System</h2>
+            <p class="muted">Full management system for taxi fleets with trip dispatch, fare calc, ratings and reporting.</p>
+            <ul>
+              <li>Driver & passenger flows</li>
+              <li>Pricing and distance calculation</li>
+              <li>Admin analytics dashboard</li>
+            </ul>
+            <p style="margin-top:10px"><a href="#" class="btn primary">View repo</a> <a href="#" class="btn ghost">Live demo</a></p>`;
+        break;
+        case 'shop':
+          html = `<h2>Shoply — E-commerce</h2>
+            <p class="muted">Complete online shop with product management, cart, checkout and Stripe integration.</p>
+            <ul><li>Product variants, images</li><li>Cart & checkout workflows</li><li>Order notifications</li></ul>`;
+        break;
+        case 'portfolio':
+          html = `<h2>Personal Portfolio</h2><p class="muted">This portfolio site — modular templates, admin backed content — built with Django & Bootstrap.</p>`;
+        break;
+        case 'todo':
+          html = `<h2>ToDo App</h2><p class="muted">Task manager with CRUD, tags and notifications.</p>`;
+        break;
+        case 'blog':
+          html = `<h2>Headless Blog CMS</h2><p class="muted">API-first blog with markdown editor and caching.</p>`;
+        break;
+        case 'gallery':
+          html = `<h2>Image Gallery</h2><p class="muted">Fast grid with lazy-loading, search and lightbox.</p>`;
+        break;
+        default:
+          html = `<h2>Project</h2><p class="muted">Details coming soon.</p>`;
+      }
+      content.innerHTML = html;
+      modal.style.display = 'flex';
+      setTimeout(()=> modal.style.opacity = '1', 5);
+    }
+    function closeModal(){ const m = document.getElementById('projectModal'); m.style.display='none'; }
+
+    // small improvement: close modal when clicking background
+    document.getElementById('modalBg')?.addEventListener('click', closeModal);
+
+    // float animation slight delay
+    document.querySelectorAll('.float').forEach((el, i)=>{ el.style.animationDelay = (i*0.6)+'s' });
+
+    // small keyboard accessibility: esc to close modal
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModal(); }});
+  </script>
+</body>
+</html>
