@@ -9,7 +9,7 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.colors import HexColor
-
+from django.http import HttpResponse
 
 
 @login_required(login_url='login')
@@ -111,7 +111,6 @@ def download_cv(request):
     return FileResponse(buffer, as_attachment=True, filename="cv.pdf")
 
 
-@login_required(login_url='login')
 def index(request):
     personalinfo = PersonalInfo.objects.first()
     skills = Skill.objects.all()
@@ -159,8 +158,39 @@ def login_views(request):
 
     return render(request, "login.html", {"form": form})
 
-
 def logout_view(request):
     logout(request)
     messages.info(request, "Siz tizimdan chiqdingiz.")
     return redirect("login")
+
+def add_projects(request):
+    if request.method == "POST":
+        if request.user.is_admin:
+            form = ProjectForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('index')
+        else:
+            return HttpResponse('Siz admin emassiz')
+    else:
+        form = ProjectForm()
+    return render(request, 'add_projects.html', {'form': form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
