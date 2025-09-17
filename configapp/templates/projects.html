@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      margin: 0;
+      padding: 40px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #38bdf8;
+      font-size: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #facc15;
+      font-size: 1.3rem;
+    }
+    .card p {
+      flex-grow: 1;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .tech-stack {
+      margin: 12px 0;
+      font-size: 0.9rem;
+      color: #38bdf8;
+    }
+    .actions {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .link a, .delete-btn {
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .link a {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+    .link a:hover {
+      background: #0ea5e9;
+      color: #fff;
+    }
+    .delete-btn {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background: #dc2626;
+    }
+    .empty {
+      text-align: center;
+      color: #94a3b8;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h2>My Projects</h2>
+
+  {% if projects %}
+  <div class="grid">
+    {% for project in projects %}
+    <div class="card">
+      <h3>{{ project.title }}</h3>
+      <p>{{ project.description|truncatewords:25 }}</p>
+      <div class="tech-stack">⚡ {{ project.tech_stack }}</div>
+
+      <div class="actions">
+        {% if project.repo_link %}
+        <div class="link">
+          <a href="{{ project.repo_link }}" target="_blank">View Repo</a>
+        </div>
+        {% endif %}
+
+        <!-- Delete form -->
+        <form method="post" action="{% url 'delete_project' project.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="delete-btn">Delete</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="empty">No projects added yet.</p>
+  {% endif %}
+</body>
+</html>

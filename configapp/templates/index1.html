@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Adhambek — Portfolio</title>
+  <title>{% if personal %}{{ personal.name }} — {% endif %}Portfolio</title>
 
   <!-- Internal CSS (all styles in one file) -->
   <style>
@@ -277,32 +277,32 @@
       50%{transform:translateY(-18px)}
       100%{transform:translateY(0)}
     }
+
+    /* override / smaller project cards styles (kept responsive) */
     .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 ta yonma-yon */
-    gap: 20px; /* kartalar orasidagi bo‘sh joy */
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
     }
 
     .project-card {
-        background: #fff;
-        padding: 12px;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        background: transparent;
+        padding: 0;
     }
 
     @media (max-width: 1024px) {
         .projects-grid {
-            grid-template-columns: repeat(2, 1fr); /* planshetlarda 2 ta yonma-yon */
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 
     @media (max-width: 600px) {
         .projects-grid {
-            grid-template-columns: 1fr; /* telefonlarda 1 ta qator */
+            grid-template-columns: 1fr;
         }
     }
 
-
+    .muted { color: var(--muted); }
 
   </style>
 </head>
@@ -310,12 +310,12 @@
 <body>
 
   <!-- Header / Top nav -->
-  <header class="site-header container">
+  <header class="site-header container" role="banner">
     <div class="brand">
-      <div class="logo">AB</div>
+      <div class="logo">{% if personal and personal.name %}{{ personal.name|slice:":2"|upper }}{% else %}AB{% endif %}</div>
       <div>
-        <div class="title">Adhambek Boylanov</div>
-        <div style="font-size:0.78rem;color:var(--muted)">Junior Backend Developer</div>
+        <div class="title">{% if personal %}{{ personal.name }}{% else %}Adhambek Boylanov{% endif %}</div>
+        <div style="font-size:0.78rem;color:var(--muted)">{% if personal %}{{ personal.profession }}{% else %}Junior Backend Developer{% endif %}</div>
       </div>
     </div>
 
@@ -324,11 +324,9 @@
       <a href="#about">About</a>
       <a href="#resume">Resume</a>
       <a href="#portfolio">Portfolio</a>
-      <a href="{% url 'contact'%}">Contact</a>
+      <a href="{% url 'contact' %}">Contact</a>
       <a class="cta" href="#contact">Hire me</a>
-
-      <a href="{% url 'login'%}">Login</a>
-
+      <a href="{% url 'login' %}">Login</a>
     </nav>
   </header>
 
@@ -340,47 +338,59 @@
 
       <div class="hero-card container fade-in">
         <div class="hero-left">
-          <h1>Hi, I'm <span style="color:var(--accent-1)">Adhambek</span></h1>
-          <p class="lead">I build fast, accessible and delightful web applications using Django, Python and modern UI patterns.</p>
+        <h1>
+          Hi, I'm
+          <span style="color:var(--accent-1)">
+            {% if personal %}{{ personal.name }}{% else %}Adhambek{% endif %}
+          </span>
+        </h1>
+          <p class="lead">{% if personal %}{{ personal.about|truncatechars:140 }}{% endif %}</p>
 
           <div class="hero-actions">
             <a class="btn primary" href="#portfolio">View projects</a>
             <a class="btn ghost" href="#about">About me</a>
-            <a class="btn ghost" href=" {% url 'download_cv' %}">Download CV</a>
+            <a class="btn ghost" href="{% url 'download_cv' %}">Download CV</a>
           </div>
 
           <div class="hero-stats" aria-hidden="true">
             <div class="stat">
               <div class="label">Projects</div>
-              <strong>10</strong>
+              <strong>{{ projects.count }}</strong>
             </div>
             <div class="stat">
               <div class="label">Clients</div>
-              <strong>12</strong>
+              <strong>{% comment %} If you have a clients count field, replace this {% endcomment %}12</strong>
             </div>
             <div class="stat">
               <div class="label">Experience</div>
-              <strong>1 year</strong>
+              <strong>{% comment %} compute years if needed {% endcomment %}1 year</strong>
             </div>
           </div>
         </div>
 
         <aside class="hero-right">
           <div style="display:flex;gap:12px;align-items:center">
-            <div class="profile-avatar">AB</div>
+            {% if personal and personal.image %}
+              <img src="{{ personal.image.url }}" alt="{{ personal.name }}" style="width:92px;height:92px;border-radius:14px;object-fit:cover;margin-bottom:12px">
+            {% else %}
+              <div class="profile-avatar">AB</div>
+            {% endif %}
             <div>
-              <div style="font-weight:800;color:#e8fff6">Adhambek Boylanov</div>
-              <div style="color:var(--muted);font-size:0.9rem">Backend web developer</div>
+              <div style="font-weight:800;color:#e8fff6">{% if personal %}{{ personal.name }}{% else %}Adhambek Boylanov{% endif %}</div>
+              <div style="color:var(--muted);font-size:0.9rem">{% if personal %}{{ personal.profession }}{% endif %}</div>
             </div>
           </div>
 
           <div style="margin-top:14px;color:var(--muted)">
             <div style="font-weight:800;margin-bottom:8px">Skills</div>
             <div class="skill-tags">
-              <span class="tag">Django</span>
-              <span class="tag">REST API</span>
-              <span class="tag">PostgreSQL</span>
-              <span class="tag">HTML</span>
+              {% for skill in skills|slice:":6" %}
+                <span class="tag">{{ skill.name }}</span>
+              {% empty %}
+                <span class="tag">Django</span>
+                <span class="tag">REST API</span>
+                <span class="tag">PostgreSQL</span>
+              {% endfor %}
             </div>
           </div>
 
@@ -397,20 +407,20 @@
       <div class="container">
         <div class="section-title">
           <h2>About Me</h2>
-          <p class="section-sub">Passionate about building products that make people's lives easier.</p>
+          <p class="section-sub">{% if personal %}{{ personal.profession }} — {{ personal.name }}{% else %}Passionate about building products that make people's lives easier.{% endif %}</p>
         </div>
 
         <div class="about-grid">
           <div class="about-card">
             <h3 style="margin-bottom:8px">Who I am</h3>
-            <p>I’m a web developer focused on building scalable backends and delightful experiences. I enjoy clean architecture, test-driven development, and shipping useful features quickly.</p>
+            <p>{% if personal %}{{ personal.about }}{% else %}I’m a web developer focused on building scalable backends and delightful experiences. I enjoy clean architecture, test-driven development, and shipping useful features quickly.{% endif %}</p>
 
             <div style="margin-top:14px" class="profile-info">
               <dl>
-                <dt>Full name</dt><dd>Adhambek Boylanov</dd>
-                <dt>Location</dt><dd>Tashkent, Uzbekistan</dd>
-                <dt>Email</dt><dd>adhambekboylanov@example.com</dd>
-                <dt>Phone</dt><dd>+998 93 303 19 06</dd>
+                <dt>Full name</dt><dd>{% if personal %}{{ personal.name }}{% else %}Adhambek Boylanov{% endif %}</dd>
+                <dt>Location</dt><dd>{% if personal and personal.address %}{{ personal.address }}{% else %}Tashkent, Uzbekistan{% endif %}</dd>
+                <dt>Email</dt><dd>{% if personal %}{{ personal.email }}{% else %}adhambekboylanov@example.com{% endif %}</dd>
+                <dt>Phone</dt><dd>{% if personal %}{{ personal.phone }}{% else %}+998 93 303 19 06{% endif %}</dd>
               </dl>
             </div>
 
@@ -433,23 +443,24 @@
             <div class="skills-list" style="margin-top:12px;">
                 {% for item in skills %}
                     <span class="badge" style="
-                        display: block;          /* har biri yangi qatorda chiqadi */
-                        margin-bottom: 8px;      /* pastki oraliq */
-                        padding: 6px 10px;       /* ichki bo‘shliq */
-                        border-radius: 8px;      /* yumaloq burchaklar */
-                        background: rgba(255,255,255,0.05); /* ochiq fon */
-                        color: #e6eef8;          /* matn rangi */
+                        display: inline-block;
+                        margin: 6px 6px 0 0;
+                        padding: 6px 10px;
+                        border-radius: 8px;
+                        background: rgba(255,255,255,0.05);
+                        color: #e6eef8;
                         font-weight: 600;
-                        width: max-content;
+                        width: auto;
                     ">
-                        {{ item.name }} - {{ item.level }}
+                        {{ item.name }}{% if item.level %} - {{ item.level }}{% endif %}
                     </span>
+                {% empty %}
+                    <span class="badge">Django</span>
+                    <span class="badge">PostgreSQL</span>
+                    <span class="badge">Docker</span>
                 {% endfor %}
             </div>
         </div>
-
-
-
           </div>
         </div>
       </div>
@@ -468,52 +479,48 @@
           <div>
             <h3 style="color:#e9fff7;margin-bottom:12px">Experience</h3>
             <div class="timeline">
-              <div class="timeline-item">
-                <div class="time">2025 — Present</div>
-                <div class="body">
-                  <h4 style="margin-bottom:6px">Backend Developer — Acme Tech</h4>
-                  <div style="color:var(--muted);font-size:0.95rem">Working on APIs, payment integrations, and microservice orchestration.</div>
+              {% for exp in experiences %}
+                <div class="timeline-item">
+                  <div class="time">
+                    {{ exp.start_date|date:"Y" }} — {% if exp.end_date %}{{ exp.end_date|date:"Y" }}{% else %}Present{% endif %}
+                  </div>
+                  <div class="body">
+                    <h4 style="margin-bottom:6px">{{ exp.position }} — {{ exp.company_name }}</h4>
+                    <div style="color:var(--muted);font-size:0.95rem">{{ exp.description }}</div>
+                  </div>
                 </div>
-              </div>
-
-              <div class="timeline-item">
-                <div class="time">2024 — 2025</div>
-                <div class="body">
-                  <h4 style="margin-bottom:6px">Backend Developer — Freelance</h4>
-                  <div style="color:var(--muted);font-size:0.95rem">Delivered several Django applications for small businesses.</div>
+              {% empty %}
+                <div class="timeline-item">
+                  <div class="time">2024 — Present</div>
+                  <div class="body">
+                    <h4 style="margin-bottom:6px">Junior Developer — Example Co</h4>
+                    <div style="color:var(--muted);font-size:0.95rem">Worked on backend services and integrations.</div>
+                  </div>
                 </div>
-              </div>
-
-              <div class="timeline-item">
-                <div class="time">2024 — 2025</div>
-                <div class="body">
-                  <h4 style="margin-bottom:6px">Junior Developer — Startup</h4>
-                  <div style="color:var(--muted);font-size:0.95rem">Helped build core features and CI/CD pipelines.</div>
-                </div>
-              </div>
+              {% endfor %}
             </div>
           </div>
 
           <div>
             <h3 style="color:#e9fff7;margin-bottom:12px">Education</h3>
             <div class="timeline">
-              <div class="timeline-item">
-              {% for education in educations %}
-                  <div class="time">{{ education.start_date }} - {{ education.end_date }}</div>
-              {% endfor %}
-              <div class="body">
-                  <h4 style="margin-bottom:6px">Python-Django Backend</h4>
-                  <div style="color:var(--muted);font-size:0.95rem">Najot Talim — coursework in algorithms, databases and software engineering.</div>
-              </div>
-              </div>
-
-              <div class="timeline-item">
-                <div class="time">2023 — 2024</div>
-                <div class="body">
-                  <h4 style="margin-bottom:6px">High School Diploma</h4>
-                  <div style="color:var(--muted);font-size:0.95rem">Focus on mathematics and informatics.</div>
+              {% for edu in educations %}
+                <div class="timeline-item">
+                  <div class="time">{{ edu.start_date|date:"Y" }} — {% if edu.end_date %}{{ edu.end_date|date:"Y" }}{% else %}Present{% endif %}</div>
+                  <div class="body">
+                    <h4 style="margin-bottom:6px">{{ edu.degree }} — {{ edu.institution }}</h4>
+                    <div style="color:var(--muted);font-size:0.95rem">{{ edu.description }}</div>
+                  </div>
                 </div>
-              </div>
+              {% empty %}
+                <div class="timeline-item">
+                  <div class="time">2021 — 2024</div>
+                  <div class="body">
+                    <h4 style="margin-bottom:6px">Computer Science — University</h4>
+                    <div style="color:var(--muted);font-size:0.95rem">Studied algorithms, data structures and databases.</div>
+                  </div>
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -542,95 +549,57 @@
                 <h3 style="margin:0 0 10px 0;">{{ project.title }}</h3>
                 <p style="font-size:14px; line-height:1.6;">{{ project.description }}</p>
                 <p style="margin:10px 0; font-size:13px; color:#bbb;">
-                  {% for tech in project.get_technologies_list %}
-                    {{ tech }}{% if not forloop.last %} • {% endif %}
-                  {% endfor %}
+                  {% if project.get_tech_list %}
+                    {% for tech in project.get_tech_list %}
+                      {{ tech }}{% if not forloop.last %} • {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    {{ project.technologies }}
+                  {% endif %}
                 </p>
                 {% if project.repo_link %}
                 <a href="{{ project.repo_link }}" target="_blank"
                    style="display:inline-block; padding:8px 16px; background:#00b4d8; color:#fff; border-radius:6px; text-decoration:none; font-weight:bold;">Details</a>
                 {% endif %}
+                &nbsp;
+                <a href="#" onclick="openProject(event, '{{ project.pk }}')" class="btn ghost" style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);">Open</a>
               </div>
             </div>
+            {% empty %}
+              <p style="color:var(--muted); text-align:center">Hech qanday loyiha topilmadi.</p>
             {% endfor %}
           </div>
         </section>
       </div>
     </section>
 
-
-
-
-
-        <!-- more projects demo area -->
-        <div style="margin-top:28px;text-align:center">
-          <a class="btn primary" href="#portfolio">See all projects</a>
-        </div>
-
-      </div>
-    </section>
-
-<!--     CONTACT -->
-<!-- Contact Section -->
-<!--<section id="contact" style="background:#0d1b2a; color:#fff; padding:60px 20px;">-->
-<!--  <div class="container" style="max-width:600px; margin:0 auto;">-->
-<!--    <h2 style="text-align:center; margin-bottom:10px;">Contact Me</h2>-->
-<!--    <p class="section-sub" style="text-align:center; color:#bbb; margin-bottom:40px;">-->
-<!--      Send me a message, and I will get back to you.-->
-<!--    </p>-->
-
-<!--    {% if messages %}-->
-<!--      {% for message in messages %}-->
-<!--        <div style="padding:10px; background:green; color:#fff; margin-bottom:20px; border-radius:6px;">-->
-<!--          {{ message }}-->
-<!--        </div>-->
-<!--      {% endfor %}-->
-<!--    {% endif %}-->
-
-<!--    <form method="post" style="display:flex; flex-direction:column; gap:15px;">-->
-<!--      {% csrf_token %}-->
-<!--      <label for="id_name">Name</label>-->
-<!--      {{ form.name }}-->
-
-<!--      <label for="id_email">Email</label>-->
-<!--      {{ form.email }}-->
-
-<!--      <label for="id_message">Message</label>-->
-<!--      {{ form.message }}-->
-
-<!--      <button type="submit"-->
-<!--              style="padding:10px 20px; background:#00b4d8; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">-->
-<!--        Send Message-->
-<!--      </button>-->
-<!--    </form>-->
-<!--  </div>-->
-<!--</section>-->
-
+    <div style="margin-top:28px;text-align:center">
+      <a class="btn primary" href="#portfolio">See all projects</a>
+    </div>
 
     <div style="margin-top:40px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;color:var(--muted)">
       <div style="min-width:180px;text-align:center">
         <div style="font-weight:800;color:#eaf6f0">Email</div>
-        <div style="margin-top:6px">adhambekboylanov@example.com</div>
+        <div style="margin-top:6px">{% if personal %}{{ personal.email }}{% else %}adhambekboylanov@example.com{% endif %}</div>
       </div>
       <div style="min-width:180px;text-align:center">
         <div style="font-weight:800;color:#eaf6f0">Phone</div>
-        <div style="margin-top:6px">+998 93 303 19 06</div>
+        <div style="margin-top:6px">{% if personal %}{{ personal.phone }}{% else %}+998 93 303 19 06{% endif %}</div>
       </div>
       <div style="min-width:180px;text-align:center">
         <div style="font-weight:800;color:#eaf6f0">Location</div>
-        <div style="margin-top:6px">Tashkent, Uzbekistan</div>
+        <div style="margin-top:6px">{% if personal and personal.address %}{{ personal.address }}{% else %}Tashkent, Uzbekistan{% endif %}</div>
       </div>
     </div>
-  </div>
-</section>
 
+  </main>
 
   <!-- Footer -->
   <footer class="site-footer container" role="contentinfo">
-    <div class="copyright">© 2025 Adhambek Boylanov — All rights reserved.</div>
+    <div class="copyright">© {{ now|date:"Y" }} {% if personal %}{{ personal.name }}{% else %}Adhambek Boylanov{% endif %} — All rights reserved.</div>
     <div style="display:flex;gap:10px;align-items:center">
-      <a href="#" aria-label="github" style="color:var(--muted)">Github</a>
-      <a href="#" aria-label="linkedin" style="color:var(--muted)">LinkedIn</a>
+      {% if personal and personal.github %}<a href="{{ personal.github }}" aria-label="github" style="color:var(--muted)">Github</a>{% else %}<a href="#" aria-label="github" style="color:var(--muted)">Github</a>{% endif %}
+      {% if personal and personal.linkedin %}<a href="{{ personal.linkedin }}" aria-label="linkedin" style="color:var(--muted)">LinkedIn</a>{% else %}<a href="#" aria-label="linkedin" style="color:var(--muted)">LinkedIn</a>{% endif %}
       <a href="#" aria-label="twitter" style="color:var(--muted)">Twitter</a>
     </div>
   </footer>
@@ -657,77 +626,49 @@
       });
     });
 
-    // Simple contact handler (demo only - replace with backend call)
-    function handleContact(e){
-      e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const subject = document.getElementById('subject').value.trim();
-      const message = document.getElementById('message').value.trim();
+    // If you want client-side demo contact handling, keep this.
+    // But server-side form posts to {% url 'contact' %} — so this is optional extra UX.
+    document.getElementById('contactForm')?.addEventListener('submit', function(e){
+      // allow server submission — but optionally show a small client-side message quickly
       const resultEl = document.getElementById('formResult');
-
-      if(!name || !email || !message){
-        resultEl.style.color = '#ffadad';
-        resultEl.textContent = 'Iltimos, barcha kerakli maydonlarni to‘ldiring.';
-        return;
-      }
-
-      // Demo: show success (in real app, send fetch() to server)
       resultEl.style.color = '#b7f2d6';
-      resultEl.textContent = 'Xabaringiz yuborildi — tez orada qaytamiz. (demo)';
-      document.getElementById('contactForm').reset();
-    }
+      resultEl.textContent = 'Xabaringiz yuborilmoqda...';
+    });
 
-    // Project modal demo content
+    // Project modal demo content using project id (pk)
+    // We'll try to read project data embedded in HTML dataset — but for simplicity let's create minimal content client-side.
     function openProject(e, key){
       e.preventDefault();
       const modal = document.getElementById('projectModal');
       const content = document.getElementById('modalContent');
+
+      // try to find the card in DOM and clone its content, otherwise fallback to generic text
+      let projectCard = null;
+      try {
+        // look for project card that contains data-pk attribute
+        projectCard = document.querySelector('[onclick*="openProject(event, \\''+ key +'\\')"]')?.closest('div');
+      } catch(err){ projectCard = null; }
+
       let html = '';
-      switch(key){
-        case 'taxi':
-          html = `<h2>Taxi Park System</h2>
-            <p class="muted">Full management system for taxi fleets with trip dispatch, fare calc, ratings and reporting.</p>
-            <ul>
-              <li>Driver & passenger flows</li>
-              <li>Pricing and distance calculation</li>
-              <li>Admin analytics dashboard</li>
-            </ul>
-            <p style="margin-top:10px"><a href="#" class="btn primary">View repo</a> <a href="#" class="btn ghost">Live demo</a></p>`;
-        break;
-        case 'shop':
-          html = `<h2>Shoply — E-commerce</h2>
-            <p class="muted">Complete online shop with product management, cart, checkout and Stripe integration.</p>
-            <ul><li>Product variants, images</li><li>Cart & checkout workflows</li><li>Order notifications</li></ul>`;
-        break;
-        case 'portfolio':
-          html = `<h2>Personal Portfolio</h2><p class="muted">This portfolio site — modular templates, admin backed content — built with Django & Bootstrap.</p>`;
-        break;
-        case 'todo':
-          html = `<h2>ToDo App</h2><p class="muted">Task manager with CRUD, tags and notifications.</p>`;
-        break;
-        case 'blog':
-          html = `<h2>Headless Blog CMS</h2><p class="muted">API-first blog with markdown editor and caching.</p>`;
-        break;
-        case 'gallery':
-          html = `<h2>Image Gallery</h2><p class="muted">Fast grid with lazy-loading, search and lightbox.</p>`;
-        break;
-        default:
-          html = `<h2>Project</h2><p class="muted">Details coming soon.</p>`;
+      if(projectCard){
+        html = '<div style="padding:10px;color:#e6eef8">' + projectCard.querySelector('h3')?.outerHTML + projectCard.querySelector('p')?.outerHTML + '</div>';
+      } else {
+        html = `<h2>Project</h2><p class="muted">Details coming soon.</p>`;
       }
+
       content.innerHTML = html;
       modal.style.display = 'flex';
       setTimeout(()=> modal.style.opacity = '1', 5);
     }
     function closeModal(){ const m = document.getElementById('projectModal'); m.style.display='none'; }
 
-    // small improvement: close modal when clicking background
+    // close modal on background click
     document.getElementById('modalBg')?.addEventListener('click', closeModal);
 
     // float animation slight delay
     document.querySelectorAll('.float').forEach((el, i)=>{ el.style.animationDelay = (i*0.6)+'s' });
 
-    // small keyboard accessibility: esc to close modal
+    // keyboard accessibility: esc to close modal
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModal(); }});
   </script>
 </body>

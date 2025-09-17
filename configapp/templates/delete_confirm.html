@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm Delete</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0f172a; color: #fff; text-align: center; padding: 60px; }
+    .box { background: #1e293b; padding: 30px; border-radius: 12px; display: inline-block; }
+    button { padding: 10px 18px; border: none; border-radius: 6px; margin: 5px; cursor: pointer; }
+    .yes { background: #ef4444; color: #fff; }
+    .yes:hover { background: #dc2626; }
+    .no { background: #38bdf8; color: #0f172a; }
+    .no:hover { background: #0ea5e9; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Are you sure you want to delete "<span style="color:#facc15">{{ project.title }}</span>"?</h2>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="yes">Yes, Delete</button>
+      <a href="{% url 'projects_list' %}"><button type="button" class="no">Cancel</button></a>
+    </form>
+  </div>
+</body>
+</html>

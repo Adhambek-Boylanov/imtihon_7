@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -161,25 +161,67 @@ def login_views(request):
 def logout_view(request):
     logout(request)
     messages.info(request, "Siz tizimdan chiqdingiz.")
-    return redirect("login")
+    return redirect("index")
 
+@login_required(login_url='login')
+def admin(request):
+    personalinfo = PersonalInfo.objects.first()
+    skills = Skill.objects.all()
+    experiences = Experience.objects.all()
+    educations = Education.objects.all()
+    projects = Project.objects.all()
+    context = {
+        'personalinfo': personalinfo,
+        'skills': skills,
+        'experiences': experiences,
+        'educations': educations,
+        'projects': projects
+    }
+    return render(request, 'admin.html',context=context)
+
+
+@login_required(login_url='login')
+def edit_profile(request):
+    user = PersonalInfo.objects.all().first()
+    if request.method == "POST":
+        form = PersonalInfoForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect("admin")
+    else:
+        form = PersonalInfoForm(instance=user)
+
+    return render(request, "edit_profile.html", {"form": form})
+
+
+@login_required(login_url='login')
 def add_projects(request):
     if request.method == "POST":
-        if request.user.is_admin:
-            form = ProjectForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('index')
-        else:
-            return HttpResponse('Siz admin emassiz')
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin')
     else:
         form = ProjectForm()
-    return render(request, 'admin.html', {'form': form})
+    return render(request, 'add_projects.html', {'form': form})
 
+@login_required(login_url='login')
+def message_list(request):
+    messages = ContactMessage.objects.all().order_by("-created_at")
+    return render(request, "messages.html", {"messages": messages})
 
+@login_required(login_url='login')
+def projects_list(request):
+    project = Project.objects.all()
+    return render(request,'projects.html',{'projects':project})
 
-
-
+@login_required(login_url='login')
+def delete_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == "POST":
+        project.delete()
+        return redirect("projects_list")
+    return render(request, "delete_confirm.html", {"project": project})
 
 
 

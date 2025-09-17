@@ -1,10 +1,38 @@
 from django import forms
 from .models import *
+from django import forms
+from .models import Project
+
 
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = '__all__'
+        fields = ["title", "description", "technologies", "tech_stack", "repo_link"]
+
+        widgets = {
+            "title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter project title"
+            }),
+            "description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "Enter project description"
+            }),
+            "technologies": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "e.g. Django • REST • Docker"
+            }),
+            "tech_stack": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Django, PostgreSQL, Bootstrap"
+            }),
+            "repo_link": forms.URLInput(attrs={
+                "class": "form-control",
+                "placeholder": "https://github.com/username/repo"
+            }),
+        }
+
 
 class SkillForm(forms.ModelForm):
     class Meta:
