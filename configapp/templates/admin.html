@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Portfolio</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      display: flex;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: #0f1724;
+      color: #fff;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+    }
+    .sidebar h2 {
+      margin-bottom: 30px;
+      font-size: 20px;
+      text-align: center;
+      color: #60A5FA;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar ul li {
+      margin: 15px 0;
+    }
+    .sidebar ul li a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .sidebar ul li a:hover {
+      background: #1e293b;
+    }
+
+    /* Main content */
+    .main {
+      margin-left: 240px;
+      padding: 20px;
+      width: 100%;
+    }
+    .main h1 {
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #1e40af;
+    }
+
+    .projects-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .projects-table th, .projects-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    .projects-table th {
+      background: #0f1724;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <ul>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Projects</a></li>
+      <li><a href="#">Messages</a></li>
+      <li><a href="#">Settings</a></li>
+      <li><a href="{% url 'logout'%}">Logout</a></li>
+      <li><a href="{% url 'admin'%}">Add projects</a></li>
+      <li><a href="index.html">View Site</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <h1>Manage Projects</h1>
+
+    <!-- Add Project Form -->
+    <div class="card">
+      <h3>Add New Project</h3>
+      <form>
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" placeholder="Project title">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea placeholder="Project description"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Thumbnail</label>
+          <input type="file">
+        </div>
+        <div class="form-group">
+          <label>Link</label>
+          <input type="url" placeholder="https://example.com">
+        </div>
+        <button class="btn">Save Project</button>
+      </form>
+    </div>
+
+    <!-- Projects Table -->
+    <div class="card">
+      <h3>All Projects</h3>
+      <table class="projects-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Link</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Taxi Park Management</td>
+            <td>Django-based taxi system</td>
+            <td><a href="#" target="_blank">View</a></td>
+            <td>
+              <button class="btn">Edit</button>
+              <button class="btn" style="background:#dc2626">Delete</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Portfolio Website</td>
+            <td>Personal portfolio site</td>
+            <td><a href="#" target="_blank">View</a></td>
+            <td>
+              <button class="btn">Edit</button>
+              <button class="btn" style="background:#dc2626">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -150,7 +150,7 @@ def login_views(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, "Xush kelibsiz, " + username + "!")
-                return redirect("index")
+                return redirect("admin")
             else:
                 messages.error(request, "Login yoki parol xato!")
     else:
@@ -174,7 +174,7 @@ def add_projects(request):
             return HttpResponse('Siz admin emassiz')
     else:
         form = ProjectForm()
-    return render(request, 'add_projects.html', {'form': form})
+    return render(request, 'admin.html', {'form': form})
 
 
 
