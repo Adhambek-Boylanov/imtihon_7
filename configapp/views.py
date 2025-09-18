@@ -224,15 +224,3 @@ def delete_project(request, pk):
     return render(request, "delete_confirm.html", {"project": project})
 
 
-
-
-
-
-
-
-
-
-
-
-
-
