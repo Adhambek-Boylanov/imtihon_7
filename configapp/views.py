@@ -12,104 +12,125 @@ from reportlab.lib.colors import HexColor
 from django.http import HttpResponse
 
 
-@login_required(login_url='login')
 def download_cv(request):
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
-
     p.setFillColor(HexColor("#0f1724"))
     p.rect(0, 0, width, height, fill=1)
 
     y = height - 50
+    personal = PersonalInfo.objects.first()  # faqat 1ta user uchun
+    if personal:
+        p.setFont("Helvetica-Bold", 24)
+        p.setFillColor(HexColor("#6EE7B7"))
+        p.drawString(40, y, f"Hi, I'm {personal.name}")
+        y -= 30
 
-    p.setFont("Helvetica-Bold", 24)
-    p.setFillColor(HexColor("#6EE7B7"))
-    p.drawString(40, y, "Hi, I'm Adhambek")
-    y -= 30
-
-    p.setFont("Helvetica", 12)
-    p.setFillColor(HexColor("#cfeef4"))
-    p.drawString(40, y, "I build fast, accessible and delightful web applications using Django, Python and modern UI patterns.")
-    y -= 40
-
-    p.setFont("Helvetica-Bold", 14)
-    p.setFillColor(HexColor("#60A5FA"))
-    p.drawString(40, y, "Skills:")
-    y -= 20
-
-    skills = ["Django", "REST API", "PostgreSQL", "HTML", "Celery"]
-    x = 40
-    for skill in skills:
-        p.setFont("Helvetica", 12)
-        p.setFillColor(HexColor("#e6eef8"))
-        p.drawString(x, y, f"- {skill}")
-        y -= 15
-
-    y -= 10
-    p.setFont("Helvetica-Bold", 14)
-    p.setFillColor(HexColor("#60A5FA"))
-    p.drawString(40, y, "Experience:")
-    y -= 20
-
-    experiences = [
-        ("2025 — Present", "Backend Developer — Acme Tech: Working on APIs, payment integrations, and microservice orchestration."),
-        ("2024 — 2025", "Backend Developer — Freelance: Delivered several Django applications for small businesses."),
-        ("2024 — 2025", "Junior Developer — Startup: Helped build core features and CI/CD pipelines.")
-    ]
-
-    p.setFont("Helvetica", 12)
-    p.setFillColor(HexColor("#e6eef8"))
-    for time, desc in experiences:
-        p.drawString(50, y, f"{time} | {desc}")
+        p.setFont("Helvetica", 14)
+        p.setFillColor(HexColor("#cfeef4"))
+        p.drawString(40, y, personal.profession)
         y -= 25
 
-    y -= 10
-    p.setFont("Helvetica-Bold", 14)
-    p.setFillColor(HexColor("#60A5FA"))
-    p.drawString(40, y, "Education:")
-    y -= 20
+        p.setFont("Helvetica", 12)
+        p.setFillColor(HexColor("#cfeef4"))
+        p.drawString(40, y, personal.about[:100])
+        y -= 40
 
-    educations = [
-        ("2024— 2025", "Python-Django Backend — Najot Talim"),
-        ("2024 — 2025", "High School Diploma — Focus on mathematics and informatics")
-    ]
-
-    p.setFont("Helvetica", 12)
-    p.setFillColor(HexColor("#e6eef8"))
-    for time, desc in educations:
-        p.drawString(50, y, f"{time} | {desc}")
+    skills = Skill.objects.all()
+    if skills.exists():
+        p.setFont("Helvetica-Bold", 14)
+        p.setFillColor(HexColor("#60A5FA"))
+        p.drawString(40, y, "Skills:")
         y -= 20
 
-    y -= 10
-    p.setFont("Helvetica-Bold", 14)
-    p.setFillColor(HexColor("#60A5FA"))
-    p.drawString(40, y, "Portfolio Projects:")
-    y -= 20
+        for skill in skills:
+            p.setFont("Helvetica", 12)
+            p.setFillColor(HexColor("#e6eef8"))
+            p.drawString(50, y, f"- {skill.name} ({skill.level})")
+            y -= 15
 
-    projects = [
-        ("Taxi Park System", "Django-based dispatch system with driver ratings, fare calculation, trip management."),
-        ("Shoply — E-commerce", "Online store with cart, checkout, payment integrations, and order tracking."),
-        ("Personal Portfolio", "Static and dynamic portfolio with contact form and CMS backend."),
-        ("ToDo App", "Task manager with reminders and tagging features."),
-        ("Headless Blog CMS", "API-first blog with markdown editor and RSS feeds."),
-        ("Gallery App", "Fast image serving with lazy-loading and lightbox experience.")
-    ]
-
-    p.setFont("Helvetica", 12)
-    p.setFillColor(HexColor("#e6eef8"))
-    for title, desc in projects:
-        p.drawString(50, y, f"- {title}: {desc}")
+    experiences = Experience.objects.all().order_by("-start_date")
+    if experiences.exists():
         y -= 20
-        if y < 100:
-            p.showPage()
-            y = height - 50
+        p.setFont("Helvetica-Bold", 14)
+        p.setFillColor(HexColor("#60A5FA"))
+        p.drawString(40, y, "Experience:")
+        y -= 20
+
+        for exp in experiences:
+            end = exp.end_date.strftime("%Y-%m") if exp.end_date else "Present"
+            time = f"{exp.start_date.strftime('%Y-%m')} — {end}"
+            text = f"{time} | {exp.position} @ {exp.company_name}"
+            p.setFont("Helvetica", 12)
+            p.setFillColor(HexColor("#e6eef8"))
+            p.drawString(50, y, text)
+            y -= 15
+
+            for line in exp.description.split("\n"):
+                p.drawString(60, y, f"- {line}")
+                y -= 15
+            y -= 10
+
+    educations = Education.objects.all().order_by("-start_date")
+    if educations.exists():
+        y -= 20
+        p.setFont("Helvetica-Bold", 14)
+        p.setFillColor(HexColor("#60A5FA"))
+        p.drawString(40, y, "Education:")
+        y -= 20
+
+        for edu in educations:
+            end = edu.end_date.strftime("%Y-%m") if edu.end_date else "Present"
+            time = f"{edu.start_date.strftime('%Y-%m')} — {end}"
+            text = f"{time} | {edu.institution} ({edu.degree})"
+            p.setFont("Helvetica", 12)
+            p.setFillColor(HexColor("#e6eef8"))
+            p.drawString(50, y, text)
+            y -= 15
+
+            if edu.description:
+                p.drawString(60, y, f"- {edu.description}")
+                y -= 15
+            y -= 5
+
+    projects = Project.objects.all()
+    if projects.exists():
+        y -= 20
+        p.setFont("Helvetica-Bold", 14)
+        p.setFillColor(HexColor("#60A5FA"))
+        p.drawString(40, y, "Portfolio Projects:")
+        y -= 20
+
+        for proj in projects:
+            p.setFont("Helvetica-Bold", 12)
+            p.setFillColor(HexColor("#e6eef8"))
+            p.drawString(50, y, f"- {proj.title}")
+            y -= 15
+
+            p.setFont("Helvetica", 11)
+            p.drawString(60, y, proj.description[:90])  # uzun bo‘lsa kesamiz
+            y -= 15
+
+            p.setFont("Helvetica-Oblique", 10)
+            p.drawString(60, y, f"Tech: {proj.tech_stack}")
+            y -= 15
+
+            if proj.repo_link:
+                p.setFont("Helvetica-Oblique", 10)
+                p.drawString(60, y, f"Repo: {proj.repo_link}")
+                y -= 15
+
+            y -= 10
+            if y < 100:
+                p.showPage()
+                y = height - 50
+
 
     p.showPage()
     p.save()
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename="cv.pdf")
-
 
 def index(request):
     personalinfo = PersonalInfo.objects.first()
