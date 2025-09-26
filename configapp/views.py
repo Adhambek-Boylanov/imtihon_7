@@ -126,7 +126,6 @@ def download_cv(request):
                 p.showPage()
                 y = height - 50
 
-
     p.showPage()
     p.save()
     buffer.seek(0)
