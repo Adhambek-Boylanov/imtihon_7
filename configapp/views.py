@@ -20,7 +20,7 @@ def download_cv(request):
     p.rect(0, 0, width, height, fill=1)
 
     y = height - 50
-    personal = PersonalInfo.objects.first()  # faqat 1ta user uchun
+    personal = PersonalInfo.objects.first()
     if personal:
         p.setFont("Helvetica-Bold", 24)
         p.setFillColor(HexColor("#6EE7B7"))
